@@ -274,29 +274,6 @@ def SecserviceRestrict():
 		print(line.strip('\n'))
 	Handler.close()
 
-#PortForward command set
-#def PortforwardCommand():
-
-
-#Port forward menu in SecurityA
-#def portfmenu1():
-#	global portfport
-#	global portfIP
-#	portFMenu2 = tk.Toplevel(root)
-#	portFMenu2.geometry("800x800")
-#	portFMenu2.title("Port Forward")
-#	portFMenu2label = Label(portFMenu2, image = image6)
-#	portFMenu2label.place(x=0,y=0)
-#	PortfLabel1 = tk.Label(portFMenu2, text="IP to port to:", font="Arial", fg="black")
-#	PortfLabel1.place(x=,y=,height=30)
-#	portfEntry1 = tk.Entry(portFMenu2, textvariable="", font="Arial")
-#	portfEntry1.place(x=,y=,width=,height=)
-#	PortFLabel2 = tk.Label(portFMenu2, text="Port to use:", font="Arial", fg="black")
-#	PortFLabel2.place(x=,y=,height=30)
-#	portfEntry2 = tk.Entry(portFMenu2, textvariable="", font="Arial")
-#	portfEntry2.place(x=,y=,width=,height=)
-
-
 #Security menu (Service restriction & port knocking)
 def SecurityA():
 	global TheBox1
