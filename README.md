@@ -12,3 +12,5 @@ I am not a python expert and this code will probably make some people's eyes ble
 Yes I know I used global completely incorrectly, yes I know it is not pythonic. 
 
 To get the code working, either insert your own images and sounds or remove entirely from code.
+
+IP addresses may be required for some commands to work, eg. Quickfix menu.
