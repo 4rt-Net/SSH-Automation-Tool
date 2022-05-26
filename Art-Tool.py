@@ -1,7 +1,7 @@
 import paramiko
 import tkinter as tk
 from tkinter import *
-#import pygame |- not required in latest version. Keeping code for in case. 
+#import pygame |- not required in latest version. Keeping code snippit if required later
 from PIL import Image, ImageTk
 
 root = tk.Tk()
@@ -14,7 +14,7 @@ image2 = PhotoImage(file = "image1.png")
 label1 = Label(root, image = image2)
 label1.place(x=0,y=0)
 root.configure(bg='black')
-#pygame.mixer.init() |- not required in latest version. Keeping code for in case. 
+#pygame.mixer.init() |- not required in latest version. Keeping code snippit if required later 
 
 #Root Interface
 Label1 = tk.Label(root, text="Enter IP Address:", font="Arial", fg="black")
