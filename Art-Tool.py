@@ -82,7 +82,7 @@ def SecurityPortKnocker():
 def SecserviceRestrict():
 	Handler = paramiko.SSHClient()
 	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	Handler.connect(TheBox1.get(), username=Userbox.get(), password=Passbox.get())
+	Handler.connect(IPEntryBox.get(), username=UsernameEntryBox.get(), password=PasswordEntryBox.get())
 	stdin, stdout, stderr = Handler.exec_command('ip service set telnet address='+RestrictionIP)
 	stdin, stdout, stderr = Handler.exec_command('ip service set ftp address='+RestrictionIP)
 	stdin, stdout, stderr = Handler.exec_command('ip service set www address='+RestrictionIP)
