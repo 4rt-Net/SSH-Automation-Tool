@@ -3,6 +3,7 @@
 import paramiko
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
 from PIL import Image, ImageTk
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -96,13 +97,13 @@ def ScriptingMenu():
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------
 def MainCommand(event):
-	if clicked.get() == "Quickfix":
+	if drop.get() == "Quickfix":
 		QuickfixCommand()
-	elif clicked.get() == "Masquerade":
+	elif drop.get() == "Masquerade":
 		MasqueradeMenu()
-	elif clicked.get() == "Security":
+	elif drop.get() == "Security":
 		SecurityMenu()
-	elif clicked.get() == "Scripting":
+	elif drop.get() == "Scripting":
 		ScriptingMenu()
 
 #Options for the tool (Command set)
@@ -114,8 +115,8 @@ options = [
 ]
 
 #Clicked variable for the dropdown box
-clicked = StringVar()
-clicked.set("Choose Option")
+#clicked = StringVar()
+#clicked.set("Choose Option")
 
 #Username label and entry field for authentication to target
 UsernameLabel = tk.Button(root, text="Username:", font=font1, fg=fg5White, bg=fg3Black)
@@ -129,8 +130,12 @@ PasswordLabel.place(x=5,y=70,width=150,height=30)
 PasswordEntryBox = tk.Entry(root, textvariable="", font=font1, fg=fg3Black, bg=fg6Grey)
 PasswordEntryBox.place(x=5,y=100,width=150,height=30)
 
-drop = OptionMenu(root, clicked, *options, command=MainCommand)
+#Combo box configuration (Drop down menu)
+drop = ttk.Combobox(root, value=options)
+drop.current(0)
+drop.bind("<<ComboboxSelected>>", MainCommand)
 drop.place(x=250,y=10,width=150,height=30)
+
 
 class TheBox:
 	def __init__(self, IPEntryBox, ScriptEntryBox, UsernameEntryBox, PasswordEntryBox):
