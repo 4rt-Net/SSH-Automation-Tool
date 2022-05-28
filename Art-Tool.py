@@ -30,7 +30,10 @@ def FirewallMenuExit():
 	advfire.destroy()
 
 def SecurityMenuExit():
-	SecMen2.destroy()
+	SecurityMenuTopLevel.destroy()
+
+def SecurityRestrictMenuExit():
+	SecurityRestrictIPToplevel.destroy()
 
 def MasqueradeMenuExit():
 	MasqueradeMenuToplevel.destroy()
@@ -46,7 +49,7 @@ def HelpMenuExit():
 def QuickfixCommand():
 	Handler = paramiko.SSHClient()
 	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	Handler.connect(TheBox1.get(), username=Userbox.get(), password=Passbox.get())
+	Handler.connect(IPEntryBox.get(), username=UsernameEntryBox.get(), password=PasswordEntryBox.get())
 	stdin, stdout, stderr = Handler.exec_command('ip service set ftp disabled=yes')
 	stdin, stdout, stderr = Handler.exec_command('ip service set api disabled=yes')
 	stdin, stdout, stderr = Handler.exec_command('ip service set api-ssl disabled=yes')
@@ -55,6 +58,68 @@ def QuickfixCommand():
 	stdin, stdout, stderr = Handler.exec_command('ip socks set enabled=no')
 	stdin, stdout, stderr = Handler.exec_command('ip dns cache flush')
 	Handler.close()
+
+def SendScript():
+	Handler = paramiko.SSHClient()
+	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	Handler.connect(IPEntryBox.get(), username=UsernameEntryBox.get(), password=PasswordEntryBox.get())
+	stdin, stdout, stderr = Handler.exec_command(ScriptEntryBox.get())
+	Handler.close()
+
+def SecurityPortKnocker():
+	Handler = paramiko.SSHClient()
+	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	Handler.connect(IPEntryBox.get(), username=UsernameEntryBox.get(), password=PasswordEntryBox.get())
+	stdin, stdout, stderr = Handler.exec_command('ip firewall address-list add list=Temporary')
+	stdin, stdout, stderr = Handler.exec_command('ip firewall address-list add list=Secured')
+	stdin, stdout, stderr = Handler.exec_command('ip firewall filter add action=add-src-to-address-list address-list=Temporary address-list-timeout=25s chain=input comment="Temp Auth" disabled=yes dst-port=4444 protocol=tcp')
+	stdin, stdout, stderr = Handler.exec_command('ip firewall filter add action=add-src-to-address-list address-list=Secured address-list-timeout=6h chain=input comment="Move to Secured" disabled=yes dst-port=4443 protocol=tcp src-address-list=Temporary')
+	stdin, stdout, stderr = Handler.exec_command('ip firewall filter add action=accept chain=input comment="Accept Connection Secured" disabled=yes src-address-list=Secured')
+	stdin, stdout, stderr = Handler.exec_command('ip firewall filter add action=drop chain=input comment="Drop All - Do not activate" disabled=yes')	
+	Handler.close()	
+
+
+def SecserviceRestrict():
+	Handler = paramiko.SSHClient()
+	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+	Handler.connect(TheBox1.get(), username=Userbox.get(), password=Passbox.get())
+	stdin, stdout, stderr = Handler.exec_command('ip service set telnet address='+RestrictionIP)
+	stdin, stdout, stderr = Handler.exec_command('ip service set ftp address='+RestrictionIP)
+	stdin, stdout, stderr = Handler.exec_command('ip service set www address='+RestrictionIP)
+	stdin, stdout, stderr = Handler.exec_command('ip service set api address='+RestrictionIP)
+	stdin, stdout, stderr = Handler.exec_command('ip service set winbox address='+RestrictionIP)
+	stdin, stdout, stderr = Handler.exec_command('ip service set api-ssl address='+RestrictionIP)
+	Handler.close()
+
+#------------------------------------------------------------------------------------------------------------------------------------------------------
+#Menus & Sub Menus (Not including root)
+def SecurityRestrictIPMenu():
+	global SecurityRestrictIPToplevel
+	SecurityRestrictIPToplevel = tk.Toplevel(root)
+	SecurityRestrictIPToplevel.geometry("400x200")
+	SecurityRestrictIPToplevel.title("Security")
+	SecurityRestrictIPlabel1 = Label(SecurityRestrictIPToplevel, image = Backdrop)
+	SecurityRestrictIPlabel1.place(x=0,y=0)
+	SecurityRestrictIPlabel2 = Label(SecurityRestrictIPToplevel, text="Enter Allowed IP Addresses: (Comma Seperated)", font=font1, fg=fg5White, bg=fg3Black)
+	SecurityRestrictIPlabel2.place(x=5,y=10)
+	RestrictionIP = tk.Entry(SecurityRestrictIPToplevel, textvariable="", font=font1, fg=fg3Black, bg=fg6Grey)
+	RestrictionIP.place(x=5,y=50,width=200,height=30)
+	SecurityRestrictIPButton = tk.Button(SecurityRestrictIPToplevel, text="Restrict", font=font1, fg=fg3Black, bg=fg6Grey, command=lambda:[SecserviceRestrict()][SecurityRestrictMenuExit()])
+	SecurityRestrictIPButton.place(x=10,y=85,width=160,height=30)
+
+
+def SecurityMenu():
+	SecurityMenuTopLevel = tk.Toplevel(root)
+	SecurityMenuTopLevel.geometry("400x200")
+	SecurityMenuTopLevel.title("Security")
+	SecurityMenuLabel1 = Label(SecurityMenuTopLevel, image = Backdrop)
+	SecurityMenuLabel1.place(x=0,y=0)
+	SecurityMenuRestriction = tk.Button(SecurityMenuTopLevel, text="Service Restriction", fg=fg2Green,font=font1, command=SecurityRestrictIPMenu)
+	SecurityMenuRestriction.place(x=5,y=50,width=150,height=30)
+	SecurityMenuPortKnocking = tk.Button(SecurityMenuTopLevel, text="Port Knocker", font=font1, command=SecurityPortKnocker)
+	SecurityMenuPortKnocking.place(x=5,y=80,width=150,height=30)
+	SecMenExit = tk.Button(SecurityMenuTopLevel, text="Back", font=font1, fg=fg1Red, command=SecurityMenuExit)
+	SecMenExit.place(x=250,y=10,width=150,height=30)
 
 def MasqueradeMenu():
 	global MasqueradeMenuToplevel
@@ -73,13 +138,6 @@ def MasqueradeMenu():
 	AddMasquerade = tk.Button(MasqueradeMenuToplevel, text="Add Masquerade", fg=fg3Black, font=font1, bg=fg6Grey)
 	AddMasquerade.place(x=5,y=80,width=160,height=30)
 
-def SendScript():
-	Handler = paramiko.SSHClient()
-	Handler.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-	Handler.connect(TheBox1.get(), username=UsernameEntryBox.get(), password=PasswordEntryBox.get())
-	stdin, stdout, stderr = Handler.exec_command(ScriptEntryBox.get())
-	Handler.close()
-
 def ScriptingMenu():
 	global ScriptingMenuToplevel
 	ScriptingMenuToplevel = tk.Toplevel(root)
@@ -96,6 +154,7 @@ def ScriptingMenu():
 	ScriptExitbutton.place(x=200,y=200, width=180, height=30)
 
 #------------------------------------------------------------------------------------------------------------------------------------------------------
+#Main menu linked commands
 def MainCommand(event):
 	if drop.get() == "Quickfix":
 		QuickfixCommand()
@@ -106,6 +165,7 @@ def MainCommand(event):
 	elif drop.get() == "Scripting":
 		ScriptingMenu()
 
+#------------------------------------------------------------------------------------------------------------------------------------------------------
 #Options for the tool (Command set)
 options = [
 "Quickfix",
@@ -138,13 +198,13 @@ drop.place(x=250,y=10,width=150,height=30)
 
 
 class TheBox:
-	def __init__(self, IPEntryBox, ScriptEntryBox, UsernameEntryBox, PasswordEntryBox):
+	def __init__(self, IPEntryBox, ScriptEntryBox, UsernameEntryBox, PasswordEntryBox, RestrictionIP):
 		self.IPEntryBox = IPEntryBox
 		self.ScriptEntryBox = ScriptEntryBox
 		self.UsernameEntryBox = UsernameEntryBox
 		self.PasswordEntryBox = PasswordEntryBox
 #		self.SNTPIP = SNTPIP
 #		self.MasqueradeIP = MasqueradeIP
-#		self.ServiceRestrictionAddIP = ServiceRestrictionAddIP
+		self.RestrictionIP = RestrictionIP
 
 root.mainloop()
